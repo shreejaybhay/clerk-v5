@@ -56,20 +56,6 @@ export async function POST(req) {
             firstName: first_name,
             lastName: last_name,
         };
-
-        console.log(user);
-
-        const newUser = await createUser(user);
-
-        if (newUser) {
-            await clerkClient.users.updateUserMetadata(id, {
-                publicMetadata: {
-                    userId: newUser._id,
-                },
-            });
-        }
-
-        return NextResponse.json({ message: "New user created", user: newUser });
     }
 
     console.log(`Webhook with an ID of ${id} and type of ${eventType}`);

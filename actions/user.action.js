@@ -1,9 +1,9 @@
 "use server";
 
+import User from "@/modals/user.modal";
 import { connect } from "@/db";
-import User from "@/models/user.model";
 
-async function createUser(user) {
+export async function createUser(user) {
     try {
         await connect();
         const newUser = await User.create(user);
@@ -12,5 +12,3 @@ async function createUser(user) {
         console.log(error);
     }
 }
-
-module.exports = { createUser };

@@ -1,7 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
+import { dark } from "@clerk/themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,11 +13,22 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider >
+    <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <Navbar />
-          {children}
+          <ClerkLoading>
+            <div className="flex items-center justify-center h-screen text-2xl">
+              LOADING...
+            </div>
+          </ClerkLoading>
+          <ClerkLoaded>
+            <div >
+              <div className="flex flex-col h-screen">
+                <Navbar />
+                {children}
+              </div>
+            </div>
+          </ClerkLoaded>
         </body>
       </html>
     </ClerkProvider>

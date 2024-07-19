@@ -1,13 +1,26 @@
 import mongoose from "mongoose";
 
-export const connect = async () => {
-    try {
-        const { connection } = await mongoose.connect(process.env.MONGODB_URL, {
-            dbName: "auth v5"
-        })
-        console.log("db connected...");
-    } catch (error) {
-        console.log(error);
-        console.log("Couldn't connect to MongoDb: " + error.message);
-    }
+const MONGODB_URL = process.env.MONGODB_URL;
+
+let cached = global.mongoose;
+
+if (!cached) {
+    cached = global.mongoose = {
+        conn: null,
+        promise: null,
+    };
 }
+
+export const connect = async () => {
+    if (cached.conn) return cached.conn;
+
+    cached.promise = cached.promise || mongoose.connect(MONGODB_URL, {
+        dbName: "clerkauthv5",
+        bufferCommands: false,
+        connectTimeoutMS: 30000,
+    });
+
+    cached.conn = await cached.promise;
+
+    return cached.conn;
+};

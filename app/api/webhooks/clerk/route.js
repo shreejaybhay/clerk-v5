@@ -17,9 +17,7 @@ export async function POST(req) {
     const svix_signature = headerPayload.get("svix-signature");
 
     if (!svix_id || !svix_timestamp || !svix_signature) {
-        return new Response("Error occurred -- no svix headers", {
-            status: 400,
-        });
+        return new NextResponse("Error occurred -- no svix headers", { status: 400 });
     }
 
     const payload = await req.json();
@@ -37,16 +35,14 @@ export async function POST(req) {
         });
     } catch (err) {
         console.error("Error verifying webhook:", err);
-        return new Response("Error occurred", {
-            status: 400,
-        });
+        return new NextResponse("Error occurred", { status: 400 });
     }
 
     const { id } = evt.data;
     const eventType = evt.type;
 
     if (eventType === "user.created") {
-        const { id, email_addresses, image_url, first_name, last_name, username } = evt.data;
+        const { email_addresses, image_url, first_name, last_name, username } = evt.data;
 
         const user = {
             clerkId: id,
@@ -56,10 +52,12 @@ export async function POST(req) {
             firstName: first_name,
             lastName: last_name,
         };
+
+        await createUser(user);
     }
 
     console.log(`Webhook with an ID of ${id} and type of ${eventType}`);
     console.log("Webhook body:", body);
 
-    return new Response("", { status: 200 });
+    return new NextResponse("", { status: 200 });
 }
